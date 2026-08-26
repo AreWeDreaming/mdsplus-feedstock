@@ -17,7 +17,8 @@ cmake -G "Unix Makefiles" \
   -DENABLE_MOTIF=OFF \
   -DENABLE_DOXYGEN=OFF \
   -DREADLINE_DIR=${PREFIX} \
-  -DLIBXML2_DIR=${PREFIX} \
+  -DLIBXML2_LIBRARY=${PREFIX}/lib/libxml2.so \
+  -DLIBXML2_INCLUDE_DIR=${PREFIX}/include \
   -DCMAKE_PREFIX_PATH=${PREFIX} \
   -DRELEASE_TAG="${RELEASE_TAG}" \
   ..
@@ -25,15 +26,6 @@ cmake -G "Unix Makefiles" \
 # Build and install C/C++ libraries
 make -j${CPU_COUNT}
 make install
-
-# Replace the broken _version.py with a correct one
-# CMake generates a malformed version, so we override it entirely
-cat > ../python/MDSplus/_version.py << EOF
-version = tuple(map(int, "${PKG_VERSION}".split('.')))
-__version__ = "${PKG_VERSION}"
-release_tag = "${PKG_VERSION}"
-release_date = "$(date -u '+%a %b %d %H:%M:%S UTC %Y')"
-EOF
 
 # Install Python package to proper site-packages location
 cd ../python/MDSplus
